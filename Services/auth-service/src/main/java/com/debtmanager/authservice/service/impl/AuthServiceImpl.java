@@ -2,6 +2,7 @@ package com.debtmanager.authservice.service.impl;
 
 import com.debtmanager.authservice.domain.model.User;
 import com.debtmanager.authservice.dto.request.LoginRequest;
+import com.debtmanager.authservice.dto.request.RegisterRequest; // NUEVO
 import com.debtmanager.authservice.dto.response.LoginResponse;
 import com.debtmanager.authservice.dto.response.TokenValidationResponse;
 import com.debtmanager.authservice.exception.InvalidCredentialsException;
@@ -12,10 +13,6 @@ import com.debtmanager.authservice.service.AuthService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-/**
- * Implementación del servicio de autenticación.
- * Valida credenciales directamente contra la base de datos local del auth-service.
- */
 @Service
 public class AuthServiceImpl implements AuthService {
 
@@ -35,7 +32,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public LoginResponse login(LoginRequest request) {
+    public LoginResponse login(LoginRequest request) { // sin cambios
         User user = userRepository.findByEmailAndEnabledTrue(request.getEmail())
                 .orElseThrow(() -> new InvalidCredentialsException("Credenciales inválidas."));
 
@@ -57,7 +54,23 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public TokenValidationResponse validateToken(String token) {
+    public void register(RegisterRequest request) { // NUEVO — reemplaza user-service
+        // Verificar que el email no esté en uso
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("Ya existe una cuenta con ese correo.");
+        }
+
+        User user = new User();
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRole(request.getRole() != null ? request.getRole() : "USER");
+        user.setEnabled(true);
+
+        userRepository.save(user);
+    }
+
+    @Override
+    public TokenValidationResponse validateToken(String token) { // sin cambios
         return jwtValidator.validate(token);
     }
 }

@@ -1,11 +1,11 @@
-package com.example.userservice.security;
+package com.debtmanager.debtorservice.security;
 
-import jakarta.servlet.Filter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+// NUEVO — registra el JwtFilter para proteger todos los endpoints del debtor-service
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
@@ -13,10 +13,10 @@ public class SecurityConfig {
     private final JwtFilter jwtFilter;
 
     @Bean
-    public FilterRegistrationBean<Filter> jwtFilterRegistration() {
-        FilterRegistrationBean<Filter> registration = new FilterRegistrationBean<>();
+    public FilterRegistrationBean<JwtFilter> jwtFilterRegistration() {
+        FilterRegistrationBean<JwtFilter> registration = new FilterRegistrationBean<>();
         registration.setFilter(jwtFilter);
-        registration.addUrlPatterns("/api/*");
+        registration.addUrlPatterns("/api/v1/debtors", "/api/v1/debtors/*");
         registration.setOrder(1);
         return registration;
     }

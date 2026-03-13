@@ -1,16 +1,15 @@
 package com.debtmanager.authservice.controller;
 
 import com.debtmanager.authservice.dto.request.LoginRequest;
+import com.debtmanager.authservice.dto.request.RegisterRequest; // NUEVO
 import com.debtmanager.authservice.dto.response.LoginResponse;
 import com.debtmanager.authservice.dto.response.TokenValidationResponse;
 import com.debtmanager.authservice.service.AuthService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus; // NUEVO
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * Controlador de autenticación.
- */
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
@@ -21,30 +20,20 @@ public class AuthController {
         this.authService = authService;
     }
 
-    /**
-     * Endpoint de login.
-     *
-     * @param request datos de autenticación
-     * @return token JWT si las credenciales son válidas
-     */
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) { // sin cambios
         return ResponseEntity.ok(authService.login(request));
     }
 
-    /**
-     * Endpoint para validar token.
-     *
-     * El token se recibe en el header:
-     * Authorization: Bearer <token>
-     *
-     * @param authorizationHeader header Authorization
-     * @return resultado de la validación
-     */
-    @PostMapping("/validate")
-    public ResponseEntity<TokenValidationResponse> validate(
-            @RequestHeader("Authorization") String authorizationHeader) {
+    @PostMapping("/register") // NUEVO — reemplaza POST /api/v1/users del user-service eliminado
+    public ResponseEntity<Void> register(@Valid @RequestBody RegisterRequest request) {
+        authService.register(request);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
 
+    @PostMapping("/validate")
+    public ResponseEntity<TokenValidationResponse> validate( // sin cambios
+            @RequestHeader("Authorization") String authorizationHeader) {
         String token = authorizationHeader.replace("Bearer ", "").trim();
         return ResponseEntity.ok(authService.validateToken(token));
     }

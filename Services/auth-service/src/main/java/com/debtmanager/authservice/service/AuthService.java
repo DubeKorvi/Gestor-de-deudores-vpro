@@ -1,27 +1,15 @@
 package com.debtmanager.authservice.service;
 
 import com.debtmanager.authservice.dto.request.LoginRequest;
+import com.debtmanager.authservice.dto.request.RegisterRequest; // NUEVO — importar el DTO del Paso 1
 import com.debtmanager.authservice.dto.response.LoginResponse;
 import com.debtmanager.authservice.dto.response.TokenValidationResponse;
 
-/**
- * Contrato del servicio de autenticación.
- */
 public interface AuthService {
 
-    /**
-     * Ejecuta el login del usuario.
-     *
-     * @param request datos de login
-     * @return respuesta con token
-     */
-    LoginResponse login(LoginRequest request);
+    LoginResponse login(LoginRequest request); // sin cambios
 
-    /**
-     * Valida un token JWT.
-     *
-     * @param token token JWT
-     * @return resultado de la validación
-     */
-    TokenValidationResponse validateToken(String token);
+    void register(RegisterRequest request); // NUEVO — auth-service maneja el registro, ya no user-service
+
+    TokenValidationResponse validateToken(String token); // sin cambios
 }
