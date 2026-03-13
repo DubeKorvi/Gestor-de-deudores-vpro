@@ -47,3 +47,5 @@ public class RiskController {
                 riskService.recalculate(clientId), TraceIdUtil.getTraceId()));
     }
 }
+
+// Tomas puto
